@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import Products from './components/Products/Products';
-
+import { Products, Navbar } from './components'
 export default class App extends Component {
   render() {
     return (
       <div>
-        <Products></Products>
+        <Navbar />
+        <Products />
       </div>
     )
   }
