@@ -15,12 +15,12 @@ const Navbar = ({totalItems}) => {
         <Toolbar>
           <Typography component={Link} to='/' variant='h6' className={classes.title} color='inherit'>
             <img src={logo} alt='Commerce.js' height='25px' className={classes.image} />
-            Commerce.js
+            Tienda Chapina
           </Typography>
           <div className={classes.grow} />
           {location.pathname === '/' && (
           <div className={classes.button}>
-            <IconButton component={Link} to='cart' aria-label='Show cart items' color='inherit'>
+            <IconButton component={Link} to='/cart' aria-label='Show cart items' color='inherit'>
               <Badge badgeContent={totalItems} color='secondary'>
                 <ShoppingCart />
               </Badge>
