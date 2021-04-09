@@ -5,6 +5,10 @@ export default makeStyles(() => ({
     maxWith: '100%'
   },
   media: {
+    width:'151px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display:'block',
     height: 0,
     paddingTop: '56.25%'
   },
