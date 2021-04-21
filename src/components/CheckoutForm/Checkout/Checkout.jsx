@@ -1,15 +1,50 @@
-import React from 'react'
-import { CssBaseline, Paper, CardMedia, Typography, CardContent, CardActions, Button } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import { CssBaseline, Paper,  Typography, CardContent, CardActions, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import QRCode from 'react-qr-code'
+import { commerce } from '../../../lib/commerce'
 
 import useStyles from './styles'
-import image from '../../../assets/qr.png'
 
-const Checkout = ({ cart, onEmptyCart }) => {
+const Checkout = ({ cart, onEmptyCart, refreshCart }) => {
+  // const [order, setOrder] = useState({})
+  // const [checkoutToken, setCheckoutToken] = useState(null);
+  // const [errorMessage, setErrorMessage] = useState('')
 
   const classes = useStyles()
 
-  console.log(cart);
+  // useEffect(() => {
+  //   if (cart.id) {
+  //     const generateToken = async () => {
+  //       try {
+  //         const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
+  //         setCheckoutToken(token);
+  //       } catch {
+  //         // if (activeStep !== steps.length) history.push('/');
+  //       }
+  //     };
+
+  //     generateToken()
+  //   }
+
+  // }, [cart])
+
+  useEffect(() => {
+    console.log('enviado a la base',cart)
+  },[])
+
+  // const handleCaptureCheckout = async (newOrder) => {
+  //   try {
+  //     console.log(checkoutToken.id);
+  //     const incomingOrder = await commerce.checkout.capture(checkoutToken.id, newOrder)
+
+  //     setOrder(incomingOrder);
+
+  //     refreshCart();
+  //   } catch (error) {
+  //     setErrorMessage(error.data.error.message);
+  //   }
+  // }
 
   return (
     <>
@@ -18,7 +53,11 @@ const Checkout = ({ cart, onEmptyCart }) => {
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography variant='h4' align='center'>Checkout</Typography>
-          <CardMedia className={classes.media} image={image} title={'image qr'}/>
+          <Typography variant='h5' align='center'>Scanee el codigo QR para pagar</Typography>
+          <QRCode className={classes.media}
+            value={cart.hosted_checkout_url}
+            size={340}
+            />
           <CardContent>
             <div className={classes.cardContent}>
               <Typography variant='h5' gutterBottom>
@@ -31,8 +70,8 @@ const Checkout = ({ cart, onEmptyCart }) => {
           <Button onClick={onEmptyCart} component={Link} to='/' variant='contained' color='secondary'>
             Cancelar Compra
           </Button>
-          <Button onClick={onEmptyCart} component={Link} to='/' variant='contained' color='primary'>
-            Pago en Efectivo
+          <Button onClick={refreshCart} component={Link} to='/' variant='contained' color='primary'>
+            Nueva Venta
           </Button>
           </CardActions>
         </Paper>

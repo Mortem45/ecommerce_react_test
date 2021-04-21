@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Products, Navbar, Cart, Checkout } from './components'
+import { Products, Navbar, Cart, Checkout, Login } from './components'
 import { commerce } from './lib/commerce'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 const App = () => {
   const [products, setProducts]= useState([])
   const [cart, setCart] = useState({})
-  // const [order, setOrder] = useState({})
-  // const [errorMessage, setErrorMessage] = useState('')
+  const [logged, setLogged] = useState(true)
 
   const fetchProduct = async () => {
     const { data } = await commerce.products.list()
@@ -41,29 +40,31 @@ const App = () => {
     setCart(response.cart)
   }
 
-  // const refreshCart = async () => {
-  //   const newCart = await commerce.cart.refresh()
+  const handleSubmitLogin = async (event) => {
+    event.preventDefault()
+    const data = {
+      email: event.target.email.value,
+      // password: event.target.password.value
+    }
+    await commerce.customer.login(data.email, 'https://mortem45.com/login/callback')
+    .then((token) => setLogged(token.success))
+  }
 
-  //   setCart(newCart)
-  // };
 
-  // const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
-  //   try {
-  //     const incomingOrder = await commerce.checkout.capture(checkoutTokenId, newOrder)
+  const refreshCart = async () => {
+    const newCart = await commerce.cart.refresh()
 
-  //     setOrder(incomingOrder)
-
-  //     refreshCart()
-  //   } catch (error) {
-  //     setErrorMessage(error.data.error.message)
-  //   }
-  // }
+    setCart(newCart);
+  }
 
   useEffect(() => {
     fetchProduct()
     fetchCart()
   }, [])
 
+  // const logged = false
+  // eslint-disable-next-line
+  {if (!logged) return <Login handleSubmit={handleSubmitLogin} />}
 
   return (
     <Router>
@@ -79,10 +80,14 @@ const App = () => {
               onUpdateCartQty={handleUpdateCartQty}
               onRemoveFromCart={handleRemoveFromCart}
               onEmptyCart={handleEmptyCart}
+              isLogged={logged}
             />
           </Route>
           <Route path='/checkout' exact>
-            <Checkout cart={cart} onEmptyCart={handleEmptyCart} />
+            <Checkout cart={cart} onEmptyCart={handleEmptyCart}  refreshCart={refreshCart} />
+          </Route>
+          <Route exact path='/login'>
+            <Login handleSubmit={handleSubmitLogin}/>
           </Route>
         </Switch>
       </div>

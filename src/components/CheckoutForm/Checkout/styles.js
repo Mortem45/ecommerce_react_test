@@ -35,7 +35,7 @@ export default makeStyles((theme) => ({
     marginRight: 'auto',
     display:'block',
     height: 0,
-    paddingTop: '88.25%'
+    // paddingTop: '88.25%'
   },
   CardActions: {
     display: 'flex',
