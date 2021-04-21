@@ -30,7 +30,7 @@ const Checkout = ({ cart, onEmptyCart, refreshCart }) => {
   // }, [cart])
 
   useEffect(() => {
-    console.log('enviado a la base',cart)
+    console.log('enviado a la base')
   },[])
 
   // const handleCaptureCheckout = async (newOrder) => {
