@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Products, Navbar, Cart, Checkout, Login } from './components'
+import { Products, Navbar, Cart, Checkout, Login, User, Payment} from './components'
 import { commerce } from './lib/commerce'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 const App = () => {
   const [products, setProducts]= useState([])
+  const [users, setUsers] = useState([])
   const [cart, setCart] = useState({})
-  const [logged, setLogged] = useState(true)
+  const [logged, setLogged] = useState(false)
+  const [user, setUser] = useState({})
 
   const fetchProduct = async () => {
     const { data } = await commerce.products.list()
@@ -43,9 +45,9 @@ const App = () => {
   const handleSubmitLogin = async (event) => {
     event.preventDefault()
     const data = {
-      email: event.target.email.value,
-      // password: event.target.password.value
+      email:  event.target.email.value.toLowerCase(),
     }
+    handleUser(data.email)
     await commerce.customer.login(data.email, 'https://mortem45.com/login/callback')
     .then((token) => setLogged(token.success))
   }
@@ -57,14 +59,36 @@ const App = () => {
     setCart(newCart);
   }
 
+  const fetchUser = async () => {
+    const url = 'https://api.chec.io/v1/customers'
+    const token = process.env.REACT_APP_CHEC_SECRET_KEY
+    const obj = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Authorization': `${token}`
+      }}
+
+    const { data } = await fetch(url, obj).then(res => res.json())
+    setUsers(data)
+  }
+
+  const handleUser = async ( email ) => {
+    users.forEach(item => {
+      if(item.email === email) {
+        setUser(item)
+      }
+    })
+  }
+
   useEffect(() => {
     fetchProduct()
     fetchCart()
+    fetchUser()
   }, [])
 
-  // const logged = false
-  // eslint-disable-next-line
-  {if (!logged) return <Login handleSubmit={handleSubmitLogin} />}
+  // {if (!logged) return <Login handleSubmit={handleSubmitLogin} />}
 
   return (
     <Router>
@@ -86,8 +110,14 @@ const App = () => {
           <Route path='/checkout' exact>
             <Checkout cart={cart} onEmptyCart={handleEmptyCart}  refreshCart={refreshCart} />
           </Route>
+          <Route path='/user' exact>
+          {!logged ? <Login handleSubmit={handleSubmitLogin}  /> : <User user={user}/>}
+          </Route>
           <Route exact path='/login'>
             <Login handleSubmit={handleSubmitLogin}/>
+          </Route>
+          <Route exact path='/payment/:id' >
+            {!logged ? <Login handleSubmit={handleSubmitLogin}  /> : <Payment user={user} onEmptyCart={handleEmptyCart} />}
           </Route>
         </Switch>
       </div>
